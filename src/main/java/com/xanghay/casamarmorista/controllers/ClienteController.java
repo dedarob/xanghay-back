@@ -16,19 +16,19 @@ import java.util.List;
 public class ClienteController {
     @Autowired
     private ClienteRepository repo;
+    @Autowired
     private ClienteService service;
 
     //Ajustar o get para receber request param de "id-username", terei que fazer uma service layer
     @GetMapping
-    public ResponseEntity<?> listCliente(@RequestParam("returnTypes") String returnTypes, @RequestParam(value="name", required = false) String name){
+    public ResponseEntity<?> listCliente(@RequestParam(value = "returnTypes", required = false) String returnTypes){
         if ("idAndNome".equals(returnTypes)){
-            List<ClienteListDTO> clienteIdeNome= service.getIdAndUsername();
-            return ResponseEntity.ok().body(clienteIdeNome);
+            List<ClienteListDTO> clienteIdENome= service.getIdAndUsername();
+            return ResponseEntity.ok().body(clienteIdENome);
+        } else {
+            List<Cliente> cliente = service.getAllUsers();
+            return ResponseEntity.ok().body(cliente);
         }
-        List<Cliente> list = (List<Cliente>) repo.findAll();
-        System.out.println("TESTE GET SENDO EXECUTADO");
-        System.out.println(list);
-        return ResponseEntity.status(200).body(list);
 
     }
 

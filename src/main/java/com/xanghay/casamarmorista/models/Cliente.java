@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Set;
+
 @Entity
 @Getter
 @Setter
@@ -16,4 +18,6 @@ public class Cliente {
     private String cidadeCliente;
     private String enderecoCliente;
     private String telefoneCliente;
+    @OneToMany(mappedBy="cliente")
+    private Set<Notas> notas;
 }
