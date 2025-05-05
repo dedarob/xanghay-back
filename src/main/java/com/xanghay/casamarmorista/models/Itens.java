@@ -11,4 +11,5 @@ import lombok.Setter;
 public class Itens {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long notaId;
 }

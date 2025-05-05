@@ -17,6 +17,6 @@ public class Notas {
     private LocalDate dataEmissao;
 
     @ManyToOne
-    @JoinColumn(name="clienteId", nullable=false)
+    @JoinColumn(name="cliente_id", nullable=false)
     private Cliente cliente;
 }
