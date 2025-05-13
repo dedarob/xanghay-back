@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface NotasRepository extends JpaRepository<Notas, Integer> {
-    List<Notas> findByClienteId(Long clienteId);
+    List<Notas> findByCliente_Id(Long clienteId);
 }

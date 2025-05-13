@@ -1,5 +1,6 @@
 package com.xanghay.casamarmorista.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,6 +19,9 @@ public class Cliente {
     private String cidadeCliente;
     private String enderecoCliente;
     private String telefoneCliente;
-    @OneToMany(mappedBy="cliente")
+
+    @OneToMany(mappedBy = "cliente")
+    @JsonBackReference
     private Set<Notas> notas;
 }
+

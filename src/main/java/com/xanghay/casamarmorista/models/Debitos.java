@@ -9,13 +9,15 @@ import java.math.BigDecimal;
 @Entity
 @Getter
 @Setter
-@Table(name="itens_nota")
-public class Itens {
+@Table(name = "debitos")
+public class Debitos {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private Long notaId;
-    private String descricao;
-    private String quantidade;
-    private BigDecimal precoUnitario;
+    private BigDecimal valorTotal;
+
+    @OneToOne
+    @JoinColumn(name = "nota_id", nullable = false)
+    private Notas nota;
+
 }

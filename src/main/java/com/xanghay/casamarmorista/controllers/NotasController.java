@@ -1,7 +1,7 @@
 package com.xanghay.casamarmorista.controllers;
 
-import com.xanghay.casamarmorista.dto.ClienteListDTO;
-import com.xanghay.casamarmorista.models.Cliente;
+import com.xanghay.casamarmorista.dto.NotasDetailedDTO;
+import com.xanghay.casamarmorista.models.Notas;
 import com.xanghay.casamarmorista.services.NotasService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,15 +16,15 @@ public class NotasController {
     @Autowired
     private NotasService service;
 
-    @GetMapping
-    public ResponseEntity<?> listNotas(@RequestParam(value = "returnTypes", required = false) String returnTypes){
-        if ("byClienteId".equals(returnTypes)){
-            List<ClienteListDTO> notasByCliente= service.procurarNotasPeloIdDoCliente();
-            return ResponseEntity.ok().body(clienteIdENome);
-        } else {
-            List<Cliente> cliente = service.getAllUsers();
-            return ResponseEntity.ok().body(cliente);
-        }
+    @GetMapping("/{id}")
+    public ResponseEntity<List<Notas>> listNotasPorId(@PathVariable Integer id){
+            List<Notas> notasByCliente= service.procurarNotasPeloIdDoCliente(id.longValue());
+            return ResponseEntity.ok().body(notasByCliente);
+    }
 
+    @GetMapping("/detailed/{id}")
+    public ResponseEntity<List<NotasDetailedDTO>> listNotasDetalhadasPorId(@PathVariable Integer id){
+        List<NotasDetailedDTO> listNotasCliente = service.procurarListaDeNotasPeloIdDoCliente(id.longValue());
+        return ResponseEntity.ok().body(listNotasCliente);
     }
 }
