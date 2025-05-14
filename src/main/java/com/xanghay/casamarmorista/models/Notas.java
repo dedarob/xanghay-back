@@ -1,5 +1,6 @@
 package com.xanghay.casamarmorista.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
@@ -7,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -29,4 +31,8 @@ public class Notas {
     }
     @OneToOne(mappedBy = "nota")
     private Debitos debitos;
+
+    @OneToMany(mappedBy = "nota")
+    @JsonBackReference
+    private Set<Itens> itens;
 }

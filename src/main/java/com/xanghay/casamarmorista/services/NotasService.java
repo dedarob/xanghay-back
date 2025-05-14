@@ -2,7 +2,9 @@ package com.xanghay.casamarmorista.services;
 
 import com.xanghay.casamarmorista.dto.NotasDetailedDTO;
 import com.xanghay.casamarmorista.mappers.NotasMapper;
+import com.xanghay.casamarmorista.models.Itens;
 import com.xanghay.casamarmorista.models.Notas;
+import com.xanghay.casamarmorista.repositories.ItensRepository;
 import com.xanghay.casamarmorista.repositories.NotasRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,8 @@ public class NotasService {
     private NotasRepository notaRepo;
     @Autowired
     private NotasMapper notasMapper;
+    @Autowired
+    private ItensRepository itensRepository;
 
     public List<Notas> procurarNotasPeloIdDoCliente(Long clienteId){
         return notaRepo.findByCliente_Id(clienteId);
@@ -25,5 +29,10 @@ public class NotasService {
         List<Notas> notasList = notaRepo.findByCliente_Id(clienteId);
         List<NotasDetailedDTO> notasDetailedDTOList = notasMapper.toNotasDetailedDTOList(notasList);
         return notasDetailedDTOList;
+    }
+
+    public List<Itens> procurarItensPeloIdNota(Long notaId){
+        List<Itens> itensList = itensRepository.findByNota_Id(notaId);
+        return itensList;
     }
 }

@@ -1,5 +1,8 @@
 package com.xanghay.casamarmorista.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,8 +17,18 @@ public class Itens {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private Long notaId;
     private String descricao;
     private String quantidade;
     private BigDecimal precoUnitario;
+
+    @ManyToOne
+    @JoinColumn(name = "nota_id", nullable = false)
+    @JsonManagedReference
+    @JsonIgnore
+    private Notas nota;
+
+    @JsonProperty("notaId")
+    public Integer getNotaId() {
+        return nota != null ? nota.getId() : null;
+    }
 }
