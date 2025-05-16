@@ -34,4 +34,6 @@ public class NotasController {
         List<Itens> itens = service.procurarItensPeloIdNota(id);
         return ResponseEntity.ok().body(itens);
     }
+
+    @PostMapping()
 }
