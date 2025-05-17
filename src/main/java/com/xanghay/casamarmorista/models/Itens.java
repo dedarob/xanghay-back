@@ -1,7 +1,6 @@
 package com.xanghay.casamarmorista.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -23,8 +22,7 @@ public class Itens {
 
     @ManyToOne
     @JoinColumn(name = "nota_id", nullable = false)
-    @JsonManagedReference
-    @JsonIgnore
+    @JsonBackReference
     private Notas nota;
 
     @JsonProperty("notaId")

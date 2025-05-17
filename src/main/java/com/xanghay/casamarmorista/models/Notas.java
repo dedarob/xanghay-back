@@ -1,8 +1,7 @@
 package com.xanghay.casamarmorista.models;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,25 +13,28 @@ import java.util.Set;
 @Getter
 @Setter
 @Table(name = "notas")
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id"
+)
 public class Notas {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
     private LocalDate dataEmissao;
 
     @ManyToOne
     @JoinColumn(name = "cliente_id", nullable = false)
-    @JsonIgnore
     private Cliente cliente;
 
-    @JsonProperty("clienteId")
-    public Integer getClienteId() {
-        return cliente != null ? cliente.getId() : null;
-    }
-    @OneToOne(mappedBy = "nota")
+    @OneToMany(mappedBy = "nota", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private Set<Itens> itens;
+
+    @OneToOne(mappedBy = "nota", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Debitos debitos;
 
-    @OneToMany(mappedBy = "nota")
-    @JsonBackReference
-    private Set<Itens> itens;
+
+
 }
+

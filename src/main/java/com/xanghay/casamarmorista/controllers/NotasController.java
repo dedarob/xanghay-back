@@ -1,5 +1,6 @@
 package com.xanghay.casamarmorista.controllers;
 
+import com.xanghay.casamarmorista.dto.CriarNotaDTO;
 import com.xanghay.casamarmorista.dto.NotasDetailedDTO;
 import com.xanghay.casamarmorista.models.Itens;
 import com.xanghay.casamarmorista.models.Notas;
@@ -35,5 +36,10 @@ public class NotasController {
         return ResponseEntity.ok().body(itens);
     }
 
-    @PostMapping()
+    @PostMapping
+    public ResponseEntity<Notas> inserirNotasComItens(@RequestBody CriarNotaDTO nota){
+        System.out.println("Recebido dataEmissao: " + nota.getNotaSimples().getDataEmissao());
+        Notas notaSalva = service.registrarNotasComItens(nota);
+        return ResponseEntity.status(201).body(notaSalva);
+    }
 }

@@ -30,4 +30,9 @@ public class ClienteService {
         return cliente;
     }
 
+    public Cliente findById(Integer id) {
+        return repo.findById(id)
+                .orElseThrow(() -> new RuntimeException("id " + id + " nn encontrou"));
+    }
+
 }
