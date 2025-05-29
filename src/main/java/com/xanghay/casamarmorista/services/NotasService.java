@@ -13,6 +13,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -53,8 +54,10 @@ public class NotasService {
                     .peek(item -> item.setNota(nota))
                     .toList();
             nota.setItens(itens.stream().collect(Collectors.toSet()));
-            Debitos debito = notasMapper.toEntity(dto.getDebitos());
+
+            Debitos debito = new Debitos();
             debito.setNota(nota);
+            debito.setValorTotal(BigDecimal.ZERO); //esse valor tá vindo do trigger no sql, entao deixe zerado
             nota.setDebitos(debito);
             return notaRepo.save(nota);
         }

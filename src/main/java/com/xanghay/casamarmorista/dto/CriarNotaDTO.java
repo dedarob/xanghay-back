@@ -14,5 +14,4 @@ import java.util.List;
 public class CriarNotaDTO {
     private NotaSimplesDTO notaSimples;
     private List<ItensDTO> itens;
-    private DebitosDTO debitos;
 }
