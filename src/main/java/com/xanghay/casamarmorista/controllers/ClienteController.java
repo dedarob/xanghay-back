@@ -38,5 +38,29 @@ public class ClienteController {
         return ResponseEntity.status(201).body(newCliente);
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<Cliente> editCliente(@PathVariable Integer id, @RequestBody Cliente cliente){
+        if (!repo.existsById(id)){
+            return ResponseEntity.notFound().build();
+        } else {
+            cliente.setId(id);
+            Cliente editadoCliente = repo.save(cliente);
+            return ResponseEntity.ok(editadoCliente);
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteCliente(@PathVariable Integer id){
+        if(!repo.existsById(id)) {
+            System.out.println("verificao nao achado");
+            return ResponseEntity.notFound().build();
+
+        } else {
+            repo.deleteById(id);
+            System.out.println("verificao achado e exec");
+            return ResponseEntity.noContent().build();
+        }
+    }
+
 
 }
