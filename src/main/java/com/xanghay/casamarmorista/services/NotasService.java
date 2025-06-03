@@ -1,6 +1,7 @@
 package com.xanghay.casamarmorista.services;
 
 import com.xanghay.casamarmorista.dto.CriarNotaDTO;
+import com.xanghay.casamarmorista.dto.ItensDTO;
 import com.xanghay.casamarmorista.dto.NotasDetailedDTO;
 import com.xanghay.casamarmorista.mappers.NotasMapper;
 import com.xanghay.casamarmorista.models.Cliente;
@@ -10,15 +11,22 @@ import com.xanghay.casamarmorista.models.Notas;
 import com.xanghay.casamarmorista.repositories.ItensRepository;
 import com.xanghay.casamarmorista.repositories.NotasRepository;
 import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 public class NotasService {
+
+    private static final Logger logger = LoggerFactory.getLogger(NotasService.class);
 
     @Autowired
     private NotasRepository notaRepo;
@@ -62,5 +70,24 @@ public class NotasService {
             return notaRepo.save(nota);
         }
 
-    }
+        public Itens adicionarItemPorNota(ItensDTO dto, Long id){
+            Optional<Notas> notaOptional = notaRepo.findById(id.intValue());
+            if (!notaOptional.isPresent()) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "nota nao encontrada");
+            } else {
+                Notas nota = notaOptional.get();
+                dto.setNotaId(nota.getId().longValue());
+                Itens item = notasMapper.toEntity(dto);
+                item.setNota(nota);
+                itensRepository.save(item);
+                logger.info("item criado com sucesso: {}", item);
+                return item;
+            }
+
+        }
+}
+
+
+
+
 

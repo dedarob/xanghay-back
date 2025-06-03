@@ -1,6 +1,7 @@
 package com.xanghay.casamarmorista.controllers;
 
 import com.xanghay.casamarmorista.dto.CriarNotaDTO;
+import com.xanghay.casamarmorista.dto.ItensDTO;
 import com.xanghay.casamarmorista.dto.NotasDetailedDTO;
 import com.xanghay.casamarmorista.models.Itens;
 import com.xanghay.casamarmorista.models.Notas;
@@ -41,5 +42,11 @@ public class NotasController {
         System.out.println("Recebido dataEmissao: " + nota.getNotaSimples().getDataEmissao());
         Notas notaSalva = service.registrarNotasComItens(nota);
         return ResponseEntity.status(201).body(notaSalva);
+    }
+
+    @PostMapping("/colocar-item/{id}")
+    public ResponseEntity<Itens> addItemPorNota(@RequestBody ItensDTO dto, @PathVariable Long id){
+        System.out.println("postman connect");
+        return ResponseEntity.status(201).body(service.adicionarItemPorNota(dto, id));
     }
 }

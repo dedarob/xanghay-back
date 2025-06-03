@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 public class ItensDTO {
-    private String notaId;
+    private Long notaId;
     private String descricao;
     private String quantidade;
     private BigDecimal precoUnitario;
