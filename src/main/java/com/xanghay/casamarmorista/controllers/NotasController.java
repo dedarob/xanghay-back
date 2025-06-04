@@ -7,8 +7,10 @@ import com.xanghay.casamarmorista.models.Itens;
 import com.xanghay.casamarmorista.models.Notas;
 import com.xanghay.casamarmorista.services.NotasService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -49,4 +51,34 @@ public class NotasController {
         System.out.println("postman connect");
         return ResponseEntity.status(201).body(service.adicionarItemPorNota(dto, id));
     }
+
+    @PutMapping("/modificar-item/{idNota}/item/{idItem}")
+    public ResponseEntity<Itens> modificarItemPorNota(@RequestBody Itens itensCru, @PathVariable Long idNota, @PathVariable Long idItem){
+        return ResponseEntity.status(200).body(service.modificarItensPorNota(itensCru, idNota, idItem));
+    }
+
+    @DeleteMapping("/deletar-item/{id}")
+    public ResponseEntity<Void> deleteItem(@PathVariable Long id){
+        try {
+            service.deletarItem(id);
+            return ResponseEntity.noContent().build();
+        } catch (ResponseStatusException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "erro ao deletar item");
+        }
+    }
+
+    @DeleteMapping("/deletar-nota/{id}")
+    public ResponseEntity<Void> deletarNota(@PathVariable Long id){
+        try {service.deleteNota(id);
+            return ResponseEntity.noContent().build();}
+        catch (ResponseStatusException e){
+            throw e;
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.toString());
+        }
+    }
+
+
 }

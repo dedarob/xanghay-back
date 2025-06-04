@@ -8,6 +8,7 @@ import com.xanghay.casamarmorista.models.Cliente;
 import com.xanghay.casamarmorista.models.Debitos;
 import com.xanghay.casamarmorista.models.Itens;
 import com.xanghay.casamarmorista.models.Notas;
+import com.xanghay.casamarmorista.repositories.DebitosRepository;
 import com.xanghay.casamarmorista.repositories.ItensRepository;
 import com.xanghay.casamarmorista.repositories.NotasRepository;
 import jakarta.transaction.Transactional;
@@ -36,6 +37,8 @@ public class NotasService {
     private ItensRepository itensRepository;
     @Autowired
     private ClienteService clienteService;
+    @Autowired
+    private  DebitosRepository debitosRepository;
 
     public List<Notas> procurarNotasPeloIdDoCliente(Long clienteId){
         return notaRepo.findByCliente_Id(clienteId);
@@ -85,9 +88,45 @@ public class NotasService {
             }
 
         }
+
+        public Itens modificarItensPorNota(Itens itensCru, Long idNota, Long idItem){
+
+        Optional<Itens> itemOptional = itensRepository.findById(idItem);
+        if(!itemOptional.isPresent()){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "item não encontrado");
+
+        }
+        Itens itensParaNota = itemOptional.get();
+        Integer notaIdDoBD = itensParaNota.getNotaId();
+        Optional<Notas> notaIdDoBd = notaRepo.findById(notaIdDoBD);
+        if (!notaIdDoBd.isPresent()){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "nota não existe");
+        }
+        Notas nota = notaIdDoBd.get();
+        itensCru.setId(idItem);
+        itensCru.setNota(nota);
+        if (!nota.getId().equals(itensCru.getNotaId())){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "id da nota e chave estrangeira na tabela item não batem");
+        }
+        itensRepository.save(itensCru);
+        return itensCru;
+        }
+
+        public void deletarItem(Long id){
+        if (!itensRepository.existsById(id)){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "item com esse id não existe");
+        }
+        itensRepository.deleteById(id);
+        }
+        @Transactional
+        public void deleteNota(Long id){
+        if (!notaRepo.existsById(id.intValue())){
+            System.out.println("maneeeeeee");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "nota com esse id não existe");
+        }
+        itensRepository.deleteAllByNota_Id(id);
+        debitosRepository.deleteByNota_Id(id);
+        notaRepo.deleteById(id.intValue());
+        System.out.println("foifoifoi");
+        }
 }
-
-
-
-
-

@@ -15,7 +15,7 @@ import java.math.BigDecimal;
 public class Itens {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
     private String descricao;
     private String quantidade;
     private BigDecimal precoUnitario;

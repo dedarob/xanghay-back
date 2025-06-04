@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface ItensRepository extends CrudRepository<Itens, Long> {
     List<Itens> findByNota_Id(Long notaId);
+    void deleteAllByNota_Id(Long notaId);
 }
