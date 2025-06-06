@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface NotasRepository extends JpaRepository<Notas, Integer> {
     List<Notas> findByCliente_Id(Long clienteId);
+    List<Notas> findAllByCliente_Id(Long clienteId);
 }

@@ -23,5 +23,8 @@ public class Cliente {
     @OneToMany(mappedBy = "cliente")
     @JsonBackReference
     private Set<Notas> notas;
+
+    @OneToMany(mappedBy = "cliente", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private Set<Pagamentos> pagamentos;
 }
 

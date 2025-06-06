@@ -3,6 +3,8 @@ package com.xanghay.casamarmorista.repositories;
 import com.xanghay.casamarmorista.models.Debitos;
 import org.springframework.data.repository.CrudRepository;
 
+import java.util.List;
+
 public interface DebitosRepository extends CrudRepository<Debitos, Long> {
     void deleteByNota_Id(Long notaId);
 
