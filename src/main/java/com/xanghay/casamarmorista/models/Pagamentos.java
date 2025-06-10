@@ -29,5 +29,13 @@ public class Pagamentos {
         return cliente != null ? cliente.getId() : null;
     }
 
-
+    @Override
+    public String toString() {
+        return "Pagamentos{" +
+                "id=" + id +
+                ", clienteId=" + (cliente != null ? cliente.getId() : null) +
+                ", dataPagamento=" + dataPagamento +
+                ", valorPago=" + valorPago +
+                '}';
+    }
 }

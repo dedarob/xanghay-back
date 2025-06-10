@@ -1,8 +1,9 @@
 package com.xanghay.casamarmorista.services;
 
 import com.xanghay.casamarmorista.dto.NotasComPagamentosDTO;
+import com.xanghay.casamarmorista.dto.NotasDebitosQueryDTO;
+import com.xanghay.casamarmorista.dto.VinculoPagamentoDebitoDTO;
 import com.xanghay.casamarmorista.models.Cliente;
-import com.xanghay.casamarmorista.models.Debitos;
 import com.xanghay.casamarmorista.models.Notas;
 import com.xanghay.casamarmorista.models.Pagamentos;
 import com.xanghay.casamarmorista.repositories.ClienteRepository;
@@ -31,6 +32,7 @@ public class PagamentosService {
     @Autowired
     private NotasRepository notasRepo;
 
+
     public Pagamentos enviarPag(Pagamentos pagamento, Long idCliente){
         if(!clienteRepo.existsById(idCliente.intValue())){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "cliente não encontrado");
@@ -40,6 +42,53 @@ public class PagamentosService {
         pagRepo.save(pagamento);
         return pagamento;
     }
+    public List<VinculoPagamentoDebitoDTO> mostrarNotasComBaixa(Long idCliente) {
+        if (!clienteRepo.existsById(idCliente.intValue())) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "cliente não encontrado");
+        }
+        List<Pagamentos> pagamentosList = pagRepo.findAllByCliente_Id(idCliente);
+        List<NotasDebitosQueryDTO> notasComValor = debRepo.buscarNotasComValor(idCliente);
+        pagamentosList.sort(Comparator.comparing(Pagamentos::getDataPagamento));
+        notasComValor.sort(Comparator.comparing(NotasDebitosQueryDTO::getDataEmissao));
+        List<VinculoPagamentoDebitoDTO> resultado = new ArrayList<>();
+        int pagamentoIndex = 0;
+        BigDecimal usadoDoPagamentoAtual = BigDecimal.ZERO;
+        for (NotasDebitosQueryDTO nota : notasComValor) {
+            BigDecimal restanteDebito = nota.getValorTotal();
+            while (restanteDebito.compareTo(BigDecimal.ZERO) > 0 && pagamentoIndex < pagamentosList.size()) {
+                Pagamentos pagamentoAtual = pagamentosList.get(pagamentoIndex);
+                BigDecimal restantePagamento = pagamentoAtual.getValorPago().subtract(usadoDoPagamentoAtual);
+
+                if (restantePagamento.compareTo(BigDecimal.ZERO) <= 0) {
+                    pagamentoIndex++;
+                    usadoDoPagamentoAtual = BigDecimal.ZERO;
+                    continue;
+                }
+                BigDecimal valorAlocado = restanteDebito.min(restantePagamento);
+                restanteDebito = restanteDebito.subtract(valorAlocado);
+                usadoDoPagamentoAtual = usadoDoPagamentoAtual.add(valorAlocado);
+                VinculoPagamentoDebitoDTO dto = new VinculoPagamentoDebitoDTO();
+                dto.setIdNota(nota.getId());
+                dto.setDataNota(nota.getDataEmissao());
+                dto.setIdDebito(nota.getIdDebito());
+                dto.setValorDebito(nota.getValorTotal());
+                dto.setValorPago(valorAlocado);
+                dto.setDataPagamento(pagamentoAtual.getDataPagamento());
+                dto.setValorRestanteDebito(restanteDebito);
+                dto.setIdPagamento(pagamentoAtual.getId());
+
+                resultado.add(dto);
+
+                if (usadoDoPagamentoAtual.compareTo(pagamentoAtual.getValorPago()) == 0) {
+                    pagamentoIndex++;
+                    usadoDoPagamentoAtual = BigDecimal.ZERO;
+                }
+            }
+        }
+
+        return resultado;
+    }
+
 
     public List<NotasComPagamentosDTO> entregarNotasComBaixa(Long idCliente) {
         if (!clienteRepo.existsById(idCliente.intValue())) {
