@@ -42,6 +42,8 @@ public class PagamentosService {
         pagRepo.save(pagamento);
         return pagamento;
     }
+
+    //logica quebrada, refazer
     public List<VinculoPagamentoDebitoDTO> mostrarNotasComBaixa(Long idCliente) {
         if (!clienteRepo.existsById(idCliente.intValue())) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "cliente não encontrado");
