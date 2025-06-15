@@ -12,12 +12,15 @@ import java.time.LocalDate;
 @ToString
 public class VinculoPagamentoDebitoDTO {
     private Long idNota;
-    private LocalDate dataNota;
-    private Long idDebito;
     private BigDecimal valorDebito;
-    private BigDecimal valorPago;
-    private LocalDate dataPagamento;
-    private BigDecimal valorRestanteDebito;
     private Long idPagamento;
-    private BigDecimal valorAtualDebitoPosPag;
+    private BigDecimal valorPagoOriginal;
+    private Long idDebito;
+    private LocalDate dataNota;
+    private LocalDate dataPagamento;
+    private BigDecimal valorAtualDebitoPosPagAnterior;
+    private BigDecimal valorPago;
+    private BigDecimal valorRestanteDebito;
+    private String situacao;
+    private Boolean isSobraSomente;
 }
