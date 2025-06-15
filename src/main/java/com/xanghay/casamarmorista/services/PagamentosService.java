@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -42,6 +43,85 @@ public class PagamentosService {
         pagRepo.save(pagamento);
         return pagamento;
     }
+
+    public List<VinculoPagamentoDebitoDTO> darSortNosPagamentos(Long idCliente){
+        if (!clienteRepo.existsById(idCliente.intValue())) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "cliente não encontrado");
+        }
+        List<Pagamentos> pagamentosList = pagRepo.findAllByCliente_Id(idCliente);
+        List<NotasDebitosQueryDTO> notasComValor = debRepo.buscarNotasComValor(idCliente);
+        pagamentosList.sort(Comparator.comparing(Pagamentos::getDataPagamento));
+        notasComValor.sort(Comparator.comparing(NotasDebitosQueryDTO::getDataEmissao));
+        List<VinculoPagamentoDebitoDTO> resultado = new ArrayList<>();
+        BigDecimal sobra = new BigDecimal(BigInteger.ZERO);
+        int j;
+        externo:
+        for(int i = 0; i<notasComValor.size(); i++){
+            for(j = 0; j<pagamentosList.size(); j++){
+                BigDecimal primeiroValor = notasComValor.get(i).getValorTotal().subtract(pagamentosList.get(j).getValorPago().add(sobra));
+                if (primeiroValor.compareTo(BigDecimal.ZERO) < 0){
+                    sobra = sobra.add(primeiroValor.abs());
+                    VinculoPagamentoDebitoDTO dto = new VinculoPagamentoDebitoDTO();
+                    dto.setIdPagamento(pagamentosList.get(j).getId());
+                    dto.setDataPagamento(pagamentosList.get(j).getDataPagamento());
+                    dto.setIdNota(notasComValor.get(i).getId());
+                    dto.setDataNota(notasComValor.get(i).getDataEmissao());
+                    dto.setValorPago(pagamentosList.get(j).getValorPago());
+                    dto.setValorDebito(notasComValor.get(i).getValorTotal());
+                    dto.setValorRestanteDebito(BigDecimal.ZERO);
+                    if (!resultado.isEmpty()) {
+                        dto.setValorAtualDebitoPosPag(resultado.get(resultado.size() - 1).getValorRestanteDebito());
+                        System.out.println("agora foi o");
+                    } else {
+                        System.out.println("foraloop");
+                    }
+                    System.out.println("temqueaparecer");
+                    resultado.add(dto);
+                    continue externo;
+
+                }
+                if (primeiroValor.compareTo(BigDecimal.ZERO) == 0) {
+                    VinculoPagamentoDebitoDTO dto = new VinculoPagamentoDebitoDTO();
+                    dto.setIdPagamento(pagamentosList.get(j).getId());
+                    dto.setDataPagamento(pagamentosList.get(j).getDataPagamento());
+                    dto.setIdNota(notasComValor.get(i).getId());
+                    dto.setDataNota(notasComValor.get(i).getDataEmissao());
+                    dto.setValorPago(pagamentosList.get(j).getValorPago());
+                    dto.setValorDebito(notasComValor.get(i).getValorTotal());
+                    dto.setValorRestanteDebito(BigDecimal.ZERO);
+                    if (!resultado.isEmpty()) {
+                        dto.setValorAtualDebitoPosPag(resultado.get(resultado.size() - 1).getValorRestanteDebito());;
+                        System.out.println("betobetobetofoi");
+                    } else {
+                        System.out.println("foraloop");
+                    }
+                    resultado.add(dto);
+                    sobra = BigDecimal.ZERO;
+                    continue externo;
+                }
+                if (primeiroValor.compareTo(BigDecimal.ZERO) > 0){
+                    VinculoPagamentoDebitoDTO dto = new VinculoPagamentoDebitoDTO();
+                    dto.setIdPagamento(pagamentosList.get(j).getId());
+                    dto.setDataPagamento(pagamentosList.get(j).getDataPagamento());
+                    dto.setIdNota(notasComValor.get(i).getId());
+                    dto.setDataNota(notasComValor.get(i).getDataEmissao());
+                    dto.setValorPago(pagamentosList.get(j).getValorPago());
+                    dto.setValorDebito(notasComValor.get(i).getValorTotal());
+                    dto.setValorRestanteDebito(primeiroValor);
+                    if (!resultado.isEmpty()) {
+                        dto.setValorAtualDebitoPosPag(resultado.get(resultado.size() - 1).getValorRestanteDebito());
+                        System.out.println("betobetobetofoi");
+                    } else {
+                        System.out.println("foraloop");
+                    }
+                    sobra = BigDecimal.ZERO;
+                    resultado.add(dto);
+                }
+            }
+        }
+        return resultado;
+    }
+
 
     //logica quebrada, refazer
     public List<VinculoPagamentoDebitoDTO> mostrarNotasComBaixa(Long idCliente) {

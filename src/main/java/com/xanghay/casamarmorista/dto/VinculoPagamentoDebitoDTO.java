@@ -1,9 +1,6 @@
 package com.xanghay.casamarmorista.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -12,6 +9,7 @@ import java.time.LocalDate;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 public class VinculoPagamentoDebitoDTO {
     private Long idNota;
     private LocalDate dataNota;
@@ -21,4 +19,5 @@ public class VinculoPagamentoDebitoDTO {
     private LocalDate dataPagamento;
     private BigDecimal valorRestanteDebito;
     private Long idPagamento;
+    private BigDecimal valorAtualDebitoPosPag;
 }

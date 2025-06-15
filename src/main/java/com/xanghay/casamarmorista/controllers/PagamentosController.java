@@ -28,7 +28,7 @@ public class PagamentosController {
     }
 
     @GetMapping("/sortado/{idCliente}")
-    public ResponseEntity<?> pegarSaldoCliente(@PathVariable Long idCliente){
-        return ResponseEntity.ok().body(pagServ.mostrarNotasComBaixa(idCliente));
+    public ResponseEntity<?> darSortNosPagamentos(@PathVariable Long idCliente){
+        return ResponseEntity.ok().body(pagServ.darSortNosPagamentos(idCliente));
     }
 }
