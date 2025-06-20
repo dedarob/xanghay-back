@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -129,8 +128,6 @@ public class PagamentosService {
 
         return resultado;
     }
-
-
 
 
     //logica quebrada, refazer
