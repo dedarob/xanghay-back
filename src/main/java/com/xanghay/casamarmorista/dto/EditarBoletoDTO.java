@@ -1,7 +1,8 @@
-package com.xanghay.casamarmorista.models;
+package com.xanghay.casamarmorista.dto;
 
-import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
@@ -9,12 +10,9 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
-@Entity
-@Table(name="boletos")
-public class Boletos {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+@NoArgsConstructor
+@AllArgsConstructor
+public class EditarBoletoDTO {
     private String descricao;
     private LocalDate dataVencimento;
     private String situacao;
@@ -23,3 +21,4 @@ public class Boletos {
     private LocalDate dataPagamento;
     private String banco;
 }
+

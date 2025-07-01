@@ -1,6 +1,5 @@
 package com.xanghay.casamarmorista.repositories;
 
-import com.xanghay.casamarmorista.dto.AnexoBoletoDTO;
 import com.xanghay.casamarmorista.dto.VerBoletosSemAnexoDTO;
 import com.xanghay.casamarmorista.models.Boletos;
 import com.xanghay.casamarmorista.models.Cliente;

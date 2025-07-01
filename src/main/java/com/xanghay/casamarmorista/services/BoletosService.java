@@ -5,9 +5,13 @@ import com.xanghay.casamarmorista.dto.VerBoletosSemAnexoDTO;
 import com.xanghay.casamarmorista.models.Boletos;
 import com.xanghay.casamarmorista.models.EnviarBoletosDTO;
 import com.xanghay.casamarmorista.repositories.BoletosRepository;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.sql.DataSource;
 import java.io.IOException;
@@ -28,11 +32,24 @@ public class BoletosService {
     public List<VerBoletosSemAnexoDTO> pegarBoletos(){
         return repo.buscarBoletosSemAnexo();
     }
+    public void editarBoleto(Integer id, VerBoletosSemAnexoDTO dto){
+        Boletos boleto = repo.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Boleto não encontrado"));
 
+        boleto.setDescricao(dto.getDescricao());
+        boleto.setDataVencimento(dto.getDataVencimento());
+        boleto.setSituacao(dto.getSituacao());
+        boleto.setValor(dto.getValor());
+        boleto.setObservacoes(dto.getObservacoes());
+        boleto.setDataPagamento(dto.getDataPagamento());
+        boleto.setBanco(dto.getBanco());
+
+        repo.save(boleto);
+    }
     public VerBoletosSemAnexoDTO pegarBoletoPeloId(Integer id){
         return repo.buscarBoletosSemAnexoPeloId(id);
     }
-    public Boletos salvarBoleto(EnviarBoletosDTO dto, MultipartFile anexo) {
+    public Boletos salvarBoleto(EnviarBoletosDTO dto) {
         Boletos boleto = new Boletos();
         boleto.setDescricao(dto.getDescricao());
         boleto.setDataVencimento(dto.getDataVencimento());
@@ -42,32 +59,8 @@ public class BoletosService {
         boleto.setDataPagamento(dto.getDataPagamento());
         boleto.setBanco(dto.getBanco());
 
-        if (anexo != null && !anexo.isEmpty()) {
-            try {
-                boleto.setAnexo(anexo.getBytes());
-            } catch (IOException e) {
-                throw new RuntimeException("Erro ao processar anexo", e);
-            }
-        }
 
         return repo.save(boleto);
     }
 
-    public AnexoBoletoDTO buscarAnexoPorIdJdbc(Integer id) {
-        try (Connection conn = dataSource.getConnection();
-             PreparedStatement stmt = conn.prepareStatement("SELECT id, anexo FROM boletos WHERE id = ?")) {
-
-            stmt.setInt(1, id);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                int boletoId = rs.getInt("id");
-                byte[] anexo = rs.getBytes("anexo");
-                return new AnexoBoletoDTO(boletoId, anexo);
-            } else {
-                throw new RuntimeException("Boleto não encontrado");
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException("Erro ao buscar anexo com JDBC", e);
-        }
-    }
 }
